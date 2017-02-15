@@ -1,30 +1,30 @@
-import gi
-gi.require_version('Gtk', '3.0')
-
 import configparser
 import os
 import argparse
 
+
+import gi
 from gi.repository import Gtk
+gi.require_version('Gtk', '3.0')
 
+PASSWORD_SUCCESS = 0
+PASSWORD_FAILURE = 1
+PASSWORD_CONTINUE = 2
 
-PASSWORD_SUCCESS=0
-PASSWORD_FAILURE=1
-PASSWORD_CONTINUE=2
+KEY_CAPTION = 1
+KEY_WRONG = 2
+KEY_ERROR = 4
+KEY_CONFIRM = 8
 
-KEY_CAPTION=1
-KEY_WRONG=2
-KEY_ERROR=4
-KEY_CONFIRM=8
-
-CONFIG_DIRECTORY='~/.config/locktouch/'
-CONFIG_FILE='~/.config/locktouch/locktouch.conf'
+CONFIG_DIRECTORY = '~/.config/locktouch/'
+CONFIG_FILE = '~/.config/locktouch/locktouch.conf'
 
 STRINGS = {
-    KEY_CAPTION: 'LOCKTOUCH',
-    KEY_WRONG:   'WRONG',
-    KEY_ERROR:   'Supplied password is invalid. Check Locktouch arguments and/or configuration file.',
-    KEY_CONFIRM: 'CONFIRM'
+    KEY_CAPTION: "LOCKTOUCH",
+    KEY_WRONG:   "WRONG",
+    KEY_ERROR:   "Supplied password is invalid. Check Locktouch "
+                 "arguments and/or configuration file.",
+    KEY_CONFIRM: "CONFIRM"
 }
 
 
@@ -39,7 +39,7 @@ class LockTouchErrorWindow(Gtk.Window):
         button = Gtk.Button(label=STRINGS[KEY_CONFIRM])
         grid.attach(button, 0, 1, 1, 1)
         button.connect("clicked", Gtk.main_quit)
-        
+
 
 class LockTouchWindow(Gtk.Window):
     def __init__(self, cfg):
@@ -53,7 +53,7 @@ class LockTouchWindow(Gtk.Window):
         self.label = Gtk.Label(STRINGS[KEY_CAPTION], margin_top=10,
                                margin_bottom=10)
         self.grid.attach(self.label, 0, 0, 3, 1)
-        for i in range(0,9):
+        for i in range(1, 10):
             btn = Gtk.Button(label="{}".format(i), expand=True)
             btn.connect("clicked", self.on_button_clicked)
             btn.password_id = '{}'.format(i)
@@ -68,6 +68,7 @@ class LockTouchWindow(Gtk.Window):
             self.label.set_text(STRINGS[KEY_WRONG])
         elif result == PASSWORD_CONTINUE:
             self.label.set_text(STRINGS[KEY_CAPTION])
+
 
 class LockTouchConfig():
     def __init__(self, argcfg):
@@ -94,6 +95,7 @@ class LockTouchConfig():
                         self.user_input = ''
                 except KeyError:
                     pass
+
     def check(self, char):
         self.user_input += char
         if len(self.user_input) == len(self.password):
@@ -105,6 +107,7 @@ class LockTouchConfig():
         else:
             return PASSWORD_CONTINUE
 
+
 def start_locktouch(argcfg):
     cfg = LockTouchConfig(argcfg)
     if cfg.valid:
@@ -115,8 +118,12 @@ def start_locktouch(argcfg):
         win.show_all()
     Gtk.main()
 
+
 if __name__ == '__main__':
-    args = argparse.ArgumentParser(description='Locktouch is a touch-friendly screen locker. Configuration file location is ~/.config/locktouch/locktouch.conf.')
+    args = argparse.ArgumentParser(description="Locktouch is a "
+                                   "touch-friendly screen locker. "
+                                   "Configuration file location is "
+                                   "~/.config/locktouch/locktouch.conf.")
     args.add_argument('--password', metavar='N',
                       help='unlocking password')
     start_locktouch(args.parse_args())
