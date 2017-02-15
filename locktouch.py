@@ -57,7 +57,7 @@ class LockTouchWindow(Gtk.Window):
             btn = Gtk.Button(label="{}".format(i), expand=True)
             btn.connect("clicked", self.on_button_clicked)
             btn.password_id = '{}'.format(i)
-            self.grid.attach(btn, i % 3, 1 + i / 3, 1, 1)
+            self.grid.attach(btn, (i - 1) % 3, 1 + (i - 1) / 3, 1, 1)
             self.buttons.append(btn)
 
     def on_button_clicked(self, widget):
