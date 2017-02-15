@@ -1,11 +1,13 @@
+#!/bin/python
+
 import configparser
 import os
 import argparse
 
 
 import gi
-from gi.repository import Gtk
 gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
 
 PASSWORD_SUCCESS = 0
 PASSWORD_FAILURE = 1
@@ -45,8 +47,11 @@ class LockTouchWindow(Gtk.Window):
     def __init__(self, cfg):
         self.cfg = cfg
         Gtk.Window.__init__(self, title="Locktouch", decorated=False,
-                            is_maximized=True, modal=True)
+                            modal=True)
         self.fullscreen()
+        self.connect("key-press-event", self.keypress)
+        self.connect("show", self.on_show)
+        self.set_keep_above(True)
         self.grid = Gtk.Grid(expand=True)
         self.add(self.grid)
         self.buttons = []
@@ -68,6 +73,13 @@ class LockTouchWindow(Gtk.Window):
             self.label.set_text(STRINGS[KEY_WRONG])
         elif result == PASSWORD_CONTINUE:
             self.label.set_text(STRINGS[KEY_CAPTION])
+    
+    def keypress(self, widget, event):
+        print("received key press {}".format(event))
+        return True
+    
+    def on_show(self, widget):
+        self.grab_focus()
 
 
 class LockTouchConfig():
